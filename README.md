@@ -5,17 +5,23 @@
 
 Framework: ROS1 Neotic (Ubuntu 20.04)
 
-Three packages:
+#### packages:
 - gomoku_vision
 - gomoku_ai
 - gomoku_control
 
-Message Type:
-- gomoku_vision/Position
-Between gomoku_vision and gomoku_ai
+#### Messages :
+- 'arm_pose' geometry_msgs/Pose
 
-- geometry_msgs/Pose.msg
-From gomoku_vision to gomoku_control
+    from gomoku_vision to gomoku_control
+
+- 'piece_position' gomoku_vision/Position
+
+    from gomoku_vision to gomoku_ai
+
+- 'next_move' gomoku_vision/Position
+
+    from gomoku_ai to gomoku_vision
 
 ### Hardware Architecture
 - Kinova Gen3 Lite: 6DOF Robot Arm
