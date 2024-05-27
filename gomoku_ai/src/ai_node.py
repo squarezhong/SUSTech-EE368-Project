@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 
 import rospy
 from gomoku_vision.msg import Position
@@ -32,8 +32,12 @@ class GomokuAINode:
         rospy.spin()
 
     def piece_callback(self, data):
+        # Convert received position
+        received_x = 7 - data.x
+        received_y = data.y
+        
         # Update the board with the human move
-        human_move = self.board.location_to_move((data.x, data.y))
+        human_move = self.board.location_to_move((received_x, received_y))
         self.board.do_move(human_move)
         
         # Get the AI move
@@ -42,10 +46,14 @@ class GomokuAINode:
         # Convert AI move back to (x, y) position
         ai_move_x, ai_move_y = self.board.move_to_location(ai_move)
         
+        # Convert AI move to publishable position
+        publish_x = 7 - ai_move_x
+        publish_y = ai_move_y
+        
         # Publish the AI move
         ai_move_position = Position()
-        ai_move_position.x = ai_move_x
-        ai_move_position.y = ai_move_y
+        ai_move_position.x = publish_x
+        ai_move_position.y = publish_y
         self.move_pub.publish(ai_move_position)
         
         # Update the board with the AI move
