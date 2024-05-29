@@ -50,7 +50,7 @@ class GomokuControlNode:
     
     # Callback
     def pose_callback(self, data):
-        rospy.loginfo("Received Pose...")
+        rospy.loginfo("Received Pose %s: ", data)
         success = self.is_init_success
 
         # Reaching Home

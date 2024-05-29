@@ -1,0 +1,3 @@
+<launch>
+    <node name="ai_node" pkg="gomoku_ai" type="ai_node.py" output="screen"/>
+</launch>
