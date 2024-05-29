@@ -58,106 +58,92 @@ class GomokuControlNode:
         success = self.is_init_success
 
         # Reaching Home
-        # if success:
-        #     rospy.loginfo("Reaching Named Target Home...")
-        #     success &= self.reach_named_position("home")
-        #     print (success)
         if success:
             rospy.loginfo("Reaching home joint angles...")
-            home_joints = [348, 321, 118, 271, 337, 258]
+            # home_joints = [14, 332, 80, 270, 288, 286]
+            home_joints = [13, 341, 90, 269, 288, 239]
             success &= self.reach_joint_angles(joint_positions=home_joints, tolerance=0.01)
             rospy.loginfo(success)
         
         # Reaching picking pose
-        # if success: 
-        #     rospy.loginfo("Reaching picking pose...")
-        #     # picking_pose = Pose()
-        #     # picking_pose.position.x = 0.376
-        #     # picking_pose.position.y = -0.004
-        #     # picking_pose.position.z = 0.136
-        #     # quaternion = quaternion_from_euler(90, 0, 150)
-        #     # picking_pose.orientation.x = quaternion[0]
-        #     # picking_pose.orientation.y = quaternion[1]
-        #     # picking_pose.orientation.z = quaternion[2]
-        #     # picking_pose.orientation.w = quaternion[3]
-        #     picking_pose = self.get_cartesian_pose()
-        #     # picking_pose.position.x += 0.08
-        #     picking_pose.position.y -= 0.2
-        #     picking_pose.position.z -= 0.25
-        #     success &= self.reach_cartesian_pose(pose=picking_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        if success:
+            rospy.loginfo("Reaching picking pose...")
+            # picking_joints = [348, 322, 118, 272, 337, 258]
+            picking_joints = [348, 329, 119, 269, 330, 214]
+            success &= self.reach_joint_angles(joint_positions=picking_joints, tolerance=0.01)
+            rospy.loginfo(success)
 
-        # # Open gripper
-        # if self.is_gripper_present and success:
-        #     rospy.loginfo("Opening the gripper...")
-        #     success &= self.reach_gripper_position(0.5)
-        #     print (success)
+        # Open gripper
+        if self.is_gripper_present and success:
+            rospy.loginfo("Opening the gripper...")
+            success &= self.reach_gripper_position(0.35)
+            rospy.loginfo(success)
 
-        # # Downward 0.1
-        # if success: 
-        #     rospy.loginfo("Downward 0.1 ...")
-        #     actual_pose = self.get_cartesian_pose()
-        #     actual_pose.position.z -= 0.1
-        #     success &= self.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        # Downward 0.05
+        if success: 
+            rospy.loginfo("Downward 0.05 ...")
+            actual_pose = self.get_cartesian_pose()
+            # actual_pose.position.z -= 0.01
+            actual_pose.position.z -= 0.05
+            success &= self.reach_cartesian_pose(pose=actual_pose, tolerance=0.005, constraints=None)
+            rospy.loginfo(success)
 
-        # # Close gripper
-        # if self.is_gripper_present and success:
-        #     rospy.loginfo("Closing the gripper ...")
-        #     success &= self.reach_gripper_position(0.81)
-        #     print (success)
+        # Close gripper
+        if self.is_gripper_present and success:
+            rospy.loginfo("Closing the gripper ...")
+            success &= self.reach_gripper_position(0.2)
+            rospy.loginfo(success)
             
-        # # Upward 0.1
-        # if success:
-        #     rospy.loginfo("Upward 0.1...")
-        #     # up_pose = data
-        #     up_pose = self.get_cartesian_pose()
-        #     up_pose.position.z += 0.1
-        #     success &= self.reach_cartesian_pose(pose=up_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        # Upward 0.1
+        if success:
+            rospy.loginfo("Upward 0.1...")
+            # up_pose = data
+            up_pose = self.get_cartesian_pose()
+            up_pose.position.z += 0.1
+            success &= self.reach_cartesian_pose(pose=up_pose, tolerance=0.005, constraints=None)
+            rospy.loginfo(success)
 
-        # # Reaching placing pose
-        # if success:
-        #     rospy.loginfo("Reaching Placing Pose...")
-        #     placing_pose = self.get_cartesian_pose()
-        #     placing_pose.x = data.x
-        #     placing_pose.y = data.y
-        #     # placing_pose.position.x -= 0.15
-        #     # placing_pose.position.y += 0.15
-        #     # placing_pose.position.z -= 0.2
-        #     # # placing_pose.orientation.x += 0.05
-        #     success &= self.reach_cartesian_pose(pose=placing_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        # Reaching placing pose
+        if success:
+            rospy.loginfo("Reaching Placing Pose...")
+            placing_pose = self.get_cartesian_pose()
+            placing_pose.position.x = data.x
+            placing_pose.position.y = data.y
+            # placing_pose.position.x -= 0.15
+            # placing_pose.position.y += 0.15
+            # placing_pose.position.z -= 0.2
+            # # placing_pose.orientation.x += 0.05
+            success &= self.reach_cartesian_pose(pose=placing_pose, tolerance=0.005, constraints=None)
+            rospy.loginfo(success)
 
-        # # Downward 0.1
-        # if success: 
-        #     rospy.loginfo("Downward 0.1 ...")
-        #     actual_pose = self.get_cartesian_pose()
-        #     actual_pose.position.z -= 0.1
-        #     success &= self.reach_cartesian_pose(pose=actual_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        # Downward 0.1
+        if success: 
+            rospy.loginfo("Downward 0.1 ...")
+            actual_pose = self.get_cartesian_pose()
+            actual_pose.position.z -= 0.09
+            success &= self.reach_cartesian_pose(pose=actual_pose, tolerance=0.005, constraints=None)
+            rospy.loginfo(success)
 
-        # # Open gripper
-        # if self.is_gripper_present and success:
-        #     rospy.loginfo("Opening the gripper...")
-        #     success &= self.reach_gripper_position(0.77)
-        #     print (success)
+        # Open gripper
+        if self.is_gripper_present and success:
+            rospy.loginfo("Opening the gripper...")
+            success &= self.reach_gripper_position(0.23)
+            rospy.loginfo(success)
 
-        # # Upward 0.1
-        # if success:
-        #     rospy.loginfo("Upward 0.1...")
-        #     # up_pose = data
-        #     up_pose = self.get_cartesian_pose()
-        #     up_pose.position.z += 0.1
-        #     success &= self.reach_cartesian_pose(pose=up_pose, tolerance=0.01, constraints=None)
-        #     print (success)
+        # Upward 0.08
+        if success:
+            rospy.loginfo("Upward 0.08...")
+            up_pose = self.get_cartesian_pose()
+            up_pose.position.z += 0.08
+            success &= self.reach_cartesian_pose(pose=up_pose, tolerance=0.005, constraints=None)
+            rospy.loginfo(success)
 
-        # # Reaching Home
-        # if success:
-        #     rospy.loginfo("Reaching home joint angles...")
-        #     home_joints = [0, 0, pi/2, pi/4, 0, pi/2]
-        #     success &= self.reach_joint_angles(joint_positions=home_joints, tolerance=0.01)
-        #     print(success)
+        # Reaching Home
+        if success:
+            rospy.loginfo("Reaching home joint angles...")
+            home_joints = [13, 341, 90, 269, 288, 239]
+            success &= self.reach_joint_angles(joint_positions=home_joints, tolerance=0.01)
+            rospy.loginfo(success)
 
         if not success:
             rospy.logerr("The example encountered an error.")
@@ -166,36 +152,22 @@ class GomokuControlNode:
     # Moving methods
     def get_cartesian_pose(self):
         arm_group = self.arm_group
-
         pose = arm_group.get_current_pose()
-        rospy.loginfo("Actual cartesian pose is : ")
-        rospy.loginfo(pose.pose)
-
+        # rospy.loginfo("Actual cartesian pose is : ")
+        # rospy.loginfo(pose.pose)
         return pose.pose
 
     def reach_joint_angles(self, joint_positions, tolerance):
         arm_group = self.arm_group
-        for p in joint_positions: 
-            if p > 180:
-                p -= 360
-            p = p / 180.0 * pi
-        
-        rospy.loginfo(joint_positions)
-        success = True
-        # joint_positions = arm_group.get_current_joint_values()
-        # rospy.loginfo("Printing current joint positions before movement:")
-        # for p in joint_positions: 
-        #     rospy.loginfo(p)
+        for i in range(len(joint_positions)): 
+            if joint_positions[i] > 180:
+                joint_positions[i] -= 360
+            joint_positions[i] = joint_positions[i] / 180.0 * pi
+        # rospy.loginfo(joint_positions)
 
         self.arm_group.set_goal_joint_tolerance(tolerance)
         arm_group.set_joint_value_target(joint_positions)
-        success &= arm_group.go(wait=True)
-
-        # new_joint_positions = arm_group.get_current_joint_values()
-        # rospy.loginfo("Printing current joint positions after movement :")
-        # for p in new_joint_positions: 
-        #     rospy.loginfo(p)
-        return success
+        return arm_group.go(wait=True)
     
     def reach_cartesian_pose(self, pose, tolerance, constraints):
         arm_group = self.arm_group
