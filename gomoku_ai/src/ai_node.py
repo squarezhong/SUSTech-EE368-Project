@@ -55,7 +55,9 @@ class GomokuAINode:
         self.best_policy = PolicyValueNetNumpy(width, height, policy_param)
         self.mcts_player = MCTSPlayer(self.best_policy.policy_value_fn, c_puct=5, n_playout=400)
         self.human = Human()
-        self.players = self.game.start_play(self.human, self.mcts_player, start_player=0, is_shown=1)
+        self.player1, self.player2 = self.human, self.mcts_player
+        self.game.start_play(self.player1, self.player2, start_player=0, is_shown=0)
+        rospy.loginfo("Board Initialized")
     
     def run(self):
         rospy.spin()
@@ -65,6 +67,7 @@ class GomokuAINode:
         received_x = 7 - data.x
         received_y = data.y
         rospy.loginfo("received message")
+        self.game.graphic(self.board, self.player1.player, self.player2.player)
         
         # Update the board with the human move
         human_move = self.board.location_to_move((received_x, received_y))
@@ -72,6 +75,7 @@ class GomokuAINode:
         
         # Get the AI move
         ai_move = self.mcts_player.get_action(self.board)
+
         rospy.loginfo("Get AI move")
         
         # Convert AI move back to (x, y) position
@@ -94,6 +98,7 @@ class GomokuAINode:
         # Update the board with the AI move
         self.board.do_move(ai_move)
         rospy.loginfo("Board updated")
+        self.game.graphic(self.board, self.player1.player, self.player2.player)
 
 if __name__ == '__main__':
     rospy.init_node('gomoku_ai_node')
