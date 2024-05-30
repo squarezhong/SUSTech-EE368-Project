@@ -2,14 +2,14 @@
 
 from enum import Enum
 
-N = 9
 class BoardState(Enum):
     EMPTY = 0
     BLACK = 1
     WHITE = 2
     
 class GomokuBoard:
-    def __init__(self):
+    def __init__(self, N):
+        self.length = N
         self.board = [[BoardState.EMPTY for _ in range(N)] for _ in range(N)]
         self.current_player = BoardState.BLACK
         self.winner = BoardState.EMPTY
@@ -44,11 +44,14 @@ class GomokuBoard:
 
     def check_direction(self, x, y, dx, dy):
         count = 0
-        while x >= 0 and x < N and y >= 0 and y < N and self.board[y][x] == self.current_player:
+        while x >= 0 and x < self.N and y >= 0 and y < self.N and self.board[y][x] == self.current_player:
             count += 1
             x += dx
             y += dy
         return count
+    
+    def get_length(self):
+        return self.length
 
     def get_board(self):
         return self.board
