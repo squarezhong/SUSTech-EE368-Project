@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(__file__))
 
 import rospy
 import pickle
-from gomoku_ai.msg import Position
+from std_msgs.msg import Int8, UInt8MultiArray
 from game import Board, Game
 from mcts_alphaZero import MCTSPlayer
 from policy_value_net_numpy import PolicyValueNetNumpy
@@ -47,8 +47,8 @@ class GomokuAINode:
             policy_param = pickle.load(f, encoding='bytes')
         self.board = Board(width=width, height=height, n_in_row=n)
         self.game = Game(self.board)
-        self.move_pub = rospy.Publisher('next_move', Position, queue_size=10)
-        self.position_sub = rospy.Subscriber('piece_position', Position, self.piece_callback)
+        self.move_pub = rospy.Publisher('next_move', UInt8MultiArray, queue_size=10)
+        self.position_sub = rospy.Subscriber('piece_position', UInt8MultiArray, self.piece_callback)
         
         # Load the policy-value network
         policy_param = pickle.load(open(self.model_file, 'rb'), encoding='bytes')
@@ -64,6 +64,8 @@ class GomokuAINode:
 
     def piece_callback(self, data):
         # Convert received position
+        data.x -= 1
+        data.y -= 1
         received_x = 7 - data.x
         received_y = data.y
         rospy.loginfo("received message")
@@ -83,11 +85,11 @@ class GomokuAINode:
         rospy.loginfo("Convert message to x, y")
         
         # Convert AI move to publishable position
-        publish_x = 7 - ai_move_x
-        publish_y = ai_move_y
+        publish_x = 7 - ai_move_x + 1
+        publish_y = ai_move_y + 1
         
         # Publish the AI move
-        ai_move_position = Position()
+        ai_move_position = UInt8MultiArray()
         ai_move_position.x = publish_x
         ai_move_position.y = publish_y
         self.move_pub.publish(ai_move_position)
