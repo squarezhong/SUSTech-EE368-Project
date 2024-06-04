@@ -1,6 +1,5 @@
 #!usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import numpy as np
 
 
@@ -168,21 +167,24 @@ class Game(object):
         players = {p1: player1, p2: player2}
         if is_shown:
             self.graphic(self.board, player1.player, player2.player)
-        while True:
-            current_player = self.board.get_current_player()
-            player_in_turn = players[current_player]
-            move = player_in_turn.get_action(self.board)
-            self.board.do_move(move)
-            if is_shown:
-                self.graphic(self.board, player1.player, player2.player)
-            end, winner = self.board.game_end()
-            if end:
-                if is_shown:
-                    if winner != -1:
-                        print("Game end. Winner is", players[winner])
-                    else:
-                        print("Game end. Tie")
-                return winner
+        # while True:
+        current_player = self.board.get_current_player()
+        player_in_turn = players[current_player]
+        move = player_in_turn.get_action(self.board)
+        self.board.do_move(move)
+        #     if is_shown:
+        #         self.graphic(self.board, player1.player, player2.player)
+        #     end, winner = self.board.game_end()
+        #     if end:
+        #         if is_shown:
+        #             if winner != -1:
+        #                 print("Game end. Winner is", players[winner])
+        #             else:
+        #                 print("Game end. Tie")
+        #         return winner
+        if is_shown:
+            self.graphic(self.board, player1.player, player2.player)
+        return players
 
     def start_self_play(self, player, is_shown=0, temp=1e-3):
         """ start a self-play game using a MCTS player, reuse the search tree,
