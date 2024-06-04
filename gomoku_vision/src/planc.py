@@ -49,7 +49,7 @@ class GomokuVisionNode:
         self.victory_pub = rospy.Publisher('/victory', Int8, queue_size=10)
         self.position_pub = rospy.Publisher('/piece_position', UInt8MultiArray, queue_size=10)
         self.move_sub = rospy.Subscriber('/next_move', UInt8MultiArray, self.move_callback)
-        self.rate = rospy.Rate(30)    
+        self.rate = rospy.Rate(30)
             
     def run(self):
         """print("Enter 'x' and 'y' coordinates as integers, separated by space. Type 'q' to quit.")
@@ -76,15 +76,19 @@ class GomokuVisionNode:
                     
                     # update the game board
                     self._play_and_check(x - 1, y - 1)
+
                 except ValueError:
                     print("Invalid input. Please enter two integers separated by a space.")
                     continue
                 
             self.rate.sleep()
 
-    def move_callback(self, data):
+    def move_callback(self, receive):
+        received_x = receive.data[0]
+        received_y = receive.data[1]
+
         # Calculate and publish the pose for the robot arm
-        point_x, point_y = calculate_point(data.x, data.y)
+        point_x, point_y = calculate_point(received_x, received_y)
             
         # Create a Point message and set x, y, z values
         point = Point(point_x, point_y, point_z)
@@ -92,16 +96,19 @@ class GomokuVisionNode:
         self.point_pub.publish(point)
         
         # Update the game board
-        self._play_and_check(data.x - 1, data.y - 1)
+        self._play_and_check(received_x - 1, received_y - 1)
         
     def _play_and_check(self, x, y):
         self.board.play(x, y)
-        if self.board.check_win(x, y):
-            print('Game over!')
-            print('The winner is:', self.board.get_winner())
-            self.board.reset()
-            # publish 1 if someone wins
-            self.victory_pub.publish(1)
+        # if self.board.check_win(x, y):
+        #     print('Game over!')
+        #     print('The winner is:', self.board.get_winner())
+        #     self.board.reset()
+        #     # publish 1 if someone wins
+        #     victory_msg = Int8()
+        #     victory_msg.data = 1
+
+        #     self.victory_pub.publish(victory_msg)
             
 
 if __name__ == '__main__':

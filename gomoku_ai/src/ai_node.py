@@ -47,8 +47,8 @@ class GomokuAINode:
             policy_param = pickle.load(f, encoding='bytes')
         self.board = Board(width=width, height=height, n_in_row=n)
         self.game = Game(self.board)
-        self.move_pub = rospy.Publisher('next_move', UInt8MultiArray, queue_size=10)
-        self.position_sub = rospy.Subscriber('piece_position', UInt8MultiArray, self.piece_callback)
+        self.move_pub = rospy.Publisher('/next_move', UInt8MultiArray, queue_size=10)
+        self.position_sub = rospy.Subscriber('/piece_position', UInt8MultiArray, self.piece_callback)
         
         # Load the policy-value network
         policy_param = pickle.load(open(self.model_file, 'rb'), encoding='bytes')
@@ -62,12 +62,13 @@ class GomokuAINode:
     def run(self):
         rospy.spin()
 
-    def piece_callback(self, data):
+    def piece_callback(self, receive):
         # Convert received position
-        data.x -= 1
-        data.y -= 1
-        received_x = 7 - data.x
-        received_y = data.y
+        x = receive.data[0] - 1
+        y = receive.data[1] - 1
+
+        received_x = 7 - x
+        received_y = y
         rospy.loginfo("received message")
         self.game.graphic(self.board, self.player1.player, self.player2.player)
         
@@ -90,8 +91,7 @@ class GomokuAINode:
         
         # Publish the AI move
         ai_move_position = UInt8MultiArray()
-        ai_move_position.x = publish_x
-        ai_move_position.y = publish_y
+        ai_move_position.data = [publish_x, publish_y]
         self.move_pub.publish(ai_move_position)
         rospy.loginfo("Published")
         rospy.loginfo(publish_x)

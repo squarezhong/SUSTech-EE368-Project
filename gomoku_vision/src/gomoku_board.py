@@ -14,6 +14,7 @@ class GomokuBoard:
         self.current_player = BoardState.BLACK
         self.winner = BoardState.EMPTY
         self.game_over = False
+        self.round = 1
 
     def reset(self):
         self.board = [[BoardState.EMPTY for _ in range(self.N)] for _ in range(self.N)]
@@ -24,12 +25,14 @@ class GomokuBoard:
     def play(self, x, y):
         if self.game_over:
             return
-        if self.board[y][x] == BoardState.EMPTY:
-            self.board[y][x] = self.current_player
-            if self.check_win(x, y):
-                self.winner = self.current_player
-                self.game_over = True
+        if self.board[x][y] == BoardState.EMPTY:
+            self.board[x][y] = self.current_player
+            # if self.check_win(x, y):
+            #     self.winner = self.current_player
+            #     self.game_over = True
             self.current_player = BoardState.BLACK if self.current_player == BoardState.WHITE else BoardState.WHITE
+
+            self.round += 1 if self.current_player == BoardState.WHITE else 0
 
     def check_win(self, x, y):
         if self.check_direction(x, y, 1, 0) + self.check_direction(x, y, -1, 0) >= 4:
@@ -67,3 +70,6 @@ class GomokuBoard:
 
     def get_state(self):
         return self.board, self.current_player, self.winner, self.game_over
+    
+    def get_round(self):
+        return self.round
