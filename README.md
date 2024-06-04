@@ -10,7 +10,7 @@ Framework: ROS1 Neotic (Ubuntu 20.04)
 - gomoku_ai
 - gomoku_control
 
-#### Messages :
+#### Messages:
 - 'arm_pose' geometry_msgs/Pose
 
     from gomoku_vision to gomoku_control
@@ -22,6 +22,12 @@ Framework: ROS1 Neotic (Ubuntu 20.04)
 - 'next_move' gomoku_vision/Position
 
     from gomoku_ai to gomoku_vision
+
+#### Run:
+- $ roscore
+- $ roslaunch kortex_driver kortex_driver.launch
+- $ roslaunch gomoku_control pick_and_place_example.launch
+- Test example: $ rostopic pub /my_gen3_lite/arm_point geometry_msgs/Point '{x: 0.427, y: 0.07, z: 0.1}'
 
 ### Hardware Architecture
 - Kinova Gen3 Lite: 6DOF Robot Arm
