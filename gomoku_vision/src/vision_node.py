@@ -31,7 +31,7 @@ class GomokuVisionNode:
                     self.position_pub.publish(position)
             
                     # update the game board
-                    self._play_and_check(position.x, position.y)
+                    self._play_and_check(position.x - 1, position.y - 1)
                 
             self.rate.sleep()
 
@@ -43,7 +43,7 @@ class GomokuVisionNode:
         self.point_pub.publish(point)
         
         # Update the game board
-        self._play_and_check(x, y)
+        self._play_and_check(x - 1, y - 1)
         
     def _play_and_check(self, x, y):
         self.board.play(x, y)

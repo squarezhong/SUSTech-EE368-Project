@@ -16,7 +16,7 @@ class GomokuBoard:
         self.game_over = False
 
     def reset(self):
-        self.board = [[BoardState.EMPTY for _ in range(N)] for _ in range(N)]
+        self.board = [[BoardState.EMPTY for _ in range(self.length)] for _ in range(self.length)]
         self.current_player = BoardState.BLACK
         self.winner = BoardState.EMPTY
         self.game_over = False
