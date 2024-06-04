@@ -8,10 +8,11 @@ project(gomoku_vision)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  cv_bridge
+  # cv_bridge
   geometry_msgs
   rospy
-  sensor_msgs
+  std_msgs
+  roscpp
   message_generation
 )
 
@@ -70,8 +71,7 @@ add_message_files(
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
-  DEPENDENCIES
-  geometry_msgs sensor_msgs
+  DEPENDENCIES geometry_msgs std_msgs
 )
 
 ################################################
