@@ -9,14 +9,14 @@ class BoardState(Enum):
     
 class GomokuBoard:
     def __init__(self, N):
-        self.length = N
+        self.N = N
         self.board = [[BoardState.EMPTY for _ in range(N)] for _ in range(N)]
         self.current_player = BoardState.BLACK
         self.winner = BoardState.EMPTY
         self.game_over = False
 
     def reset(self):
-        self.board = [[BoardState.EMPTY for _ in range(self.length)] for _ in range(self.length)]
+        self.board = [[BoardState.EMPTY for _ in range(self.N)] for _ in range(self.N)]
         self.current_player = BoardState.BLACK
         self.winner = BoardState.EMPTY
         self.game_over = False
@@ -51,7 +51,7 @@ class GomokuBoard:
         return count
     
     def get_length(self):
-        return self.length
+        return self.N
 
     def get_board(self):
         return self.board

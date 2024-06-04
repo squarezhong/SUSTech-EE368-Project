@@ -3,9 +3,8 @@
 import os
 import rospy
 import numpy as np
-from std_msgs.msg import Int8
+from std_msgs.msg import Int8, UInt8MultiArray
 from geometry_msgs.msg import Point
-from gomoku_vision.msg import Position
 from gomoku_board import GomokuBoard, BoardState
 
 
@@ -48,8 +47,8 @@ class GomokuVisionNode:
         self.board = GomokuBoard(8)
         self.point_pub = rospy.Publisher('/arm_point', Point, queue_size=10)
         self.victory_pub = rospy.Publisher('/victory', Int8, queue_size=10)
-        self.position_pub = rospy.Publisher('/piece_position', Position, queue_size=10)
-        self.move_sub = rospy.Subscriber('/next_move', Position, self.move_callback)
+        self.position_pub = rospy.Publisher('/piece_position', UInt8MultiArray, queue_size=10)
+        self.move_sub = rospy.Subscriber('/next_move', UInt8MultiArray, self.move_callback)
         self.rate = rospy.Rate(30)    
             
     def run(self):
@@ -69,13 +68,14 @@ class GomokuVisionNode:
                     # Split the input and convert to integers
                     x, y = map(int, user_input.split())
                     
-                    position = Position(x, y)
+                    position = UInt8MultiArray()
+                    position.data = [x, y]
                     self.position_pub.publish(position)
                     
                     print(f"Published Position: x={x}, y={y}")
                     
                     # update the game board
-                    self._play_and_check(position.x - 1, position.y - 1)
+                    self._play_and_check(x - 1, y - 1)
                 except ValueError:
                     print("Invalid input. Please enter two integers separated by a space.")
                     continue
