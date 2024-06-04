@@ -7,7 +7,6 @@ trained AI model without installing any DL framwork
 @author: Junxiao Song
 """
 
-from __future__ import print_function
 import numpy as np
 
 
