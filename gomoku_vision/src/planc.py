@@ -9,10 +9,10 @@ from gomoku_board import GomokuBoard, BoardState
 
 
 # set the points of the board corners
-point11 = np.array([1, 1])
-point18 = np.array([2, 2])
-point81 = np.array([0, 1])
-point88 = np.array([1, 3])
+point11 = np.array([0.303, -0.002])
+point18 = np.array([0.305, 0.182])
+point81 = np.array([0.477, -0.008])
+point88 = np.array([0.482, 0.182])
 
 point_z = 0.1
 
@@ -32,6 +32,7 @@ def calculate_point(row, col):
     # Calculate the offset relative to the top-left corner (point11)
     offset_x = (col - 1) * small_square_length + small_square_length / 2
     offset_y = (row - 1) * small_square_length + small_square_length / 2
+    offset_y = -offset_y
     
     # Rotate the offset back to the original coordinate system
     offset = np.array([offset_x * np.cos(angle) - offset_y * np.sin(angle),
@@ -45,7 +46,7 @@ def calculate_point(row, col):
 class GomokuVisionNode:
     def __init__(self):
         self.board = GomokuBoard(8)
-        self.point_pub = rospy.Publisher('/arm_point', Point, queue_size=10)
+        self.point_pub = rospy.Publisher('/my_gen3_lite/arm_point', Point, queue_size=10)
         self.victory_pub = rospy.Publisher('/victory', Int8, queue_size=10)
         self.position_pub = rospy.Publisher('/piece_position', UInt8MultiArray, queue_size=10)
         self.move_sub = rospy.Subscriber('/next_move', UInt8MultiArray, self.move_callback)
@@ -91,7 +92,10 @@ class GomokuVisionNode:
         point_x, point_y = calculate_point(received_x, received_y)
             
         # Create a Point message and set x, y, z values
-        point = Point(point_x, point_y, point_z)
+        point = Point()
+        point.x = point_x
+        point.y = point_y
+        point.z = point_z
         
         self.point_pub.publish(point)
         
