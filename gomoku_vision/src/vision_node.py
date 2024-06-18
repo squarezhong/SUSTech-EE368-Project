@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 
+import os
 import rospy
 from geometry_msgs.msg import Point
-from std_msgs.msg import Int8
-from gomoku_vision.msg import Position
+from std_msgs.msg import Int8, UInt8MultiArray
 from realsense import RealSense
 from gomoku_board import GomokuBoard, BoardState
 from gomoku_cv import GomokuCV
+
+master_uri = None
 
 class GomokuVisionNode:
     def __init__(self):
@@ -15,9 +17,10 @@ class GomokuVisionNode:
         self.cv = GomokuCV(self.board.get_length())
         self.point_pub = rospy.Publisher('/arm_point', Point, queue_size=10)
         self.victory_pub = rospy.Publisher('/victory', Int8, queue_size=10)
-        self.position_pub = rospy.Publisher('/piece_position', Position, queue_size=10)
-        self.move_sub = rospy.Subscriber('/next_move', Position, self.move_callback)
+        self.position_pub = rospy.Publisher('/piece_position', UInt8MultiArray, queue_size=10)
+        self.move_sub = rospy.Subscriber('/next_move', UInt8MultiArray, self.move_callback)
         self.rate = rospy.Rate(30)
+
 
     def run(self):
         while not rospy.is_shutdown():
@@ -26,38 +29,58 @@ class GomokuVisionNode:
                 # Find the newly placed piece
                 position = self.cv.process(color_image)
             
-                if position is not False:
-                    print('New piece placed at:', position)
-                    self.position_pub.publish(position)
-            
+                if position is not None:
+                    x = position[0]
+                    y = position[1]
+                    
+                    print('New piece placed at:', x, y)
                     # update the game board
-                    self._play_and_check(position.x - 1, position.y - 1)
+                    self._play_and_check(x - 1, y - 1)
+                    
+                    # Publish the position of the newly placed black piece
+                    position_black = UInt8MultiArray()
+                    position_black.data = [x, y]
+                    self.position_pub.publish(position_black)
                 
             self.rate.sleep()
 
-    def move_callback(self, data):
+    def move_callback(self, receive):
+        received_x = receive.data[0]
+        received_y = receive.data[1]
+        
         # Calculate and publish the pose for the robot arm
-        x = data.x
-        y = data.y
-        point = GomokuCV.calculate_point(x, y)
+        point_x, point_y = self.cv.calculate_point(received_x, received_y)
+        
+        # Create a Point message and set x, y, z values
+        point = Point()
+        point.x = point_x
+        point.y = point_y
+        point.z = 0.1 # not used
+        
         self.point_pub.publish(point)
         
         # Update the game board
-        self._play_and_check(x - 1, y - 1)
+        self._play_and_check(received_x - 1, received_y - 1)
         
     def _play_and_check(self, x, y):
         self.board.play(x, y)
-        if self.board.check_win(x, y):
+        if self.board.is_game_over():
             print('Game over!')
             print('The winner is:', self.board.get_winner())
             self.board.reset()
             # publish 1 if someone wins
-            self.victory_pub.publish(1)
+            victory = Int8()
+            victory.data = 1
+            self.victory_pub.publish(victory)
 
     def stop(self):
         self.camera.stop()
 
 if __name__ == '__main__':
+    # Set the ROS_MASTER_URI environment variable
+    if master_uri is not None:
+        os.environ['ROS_MASTER_URI'] = master_uri
+        
     rospy.init_node('gomoku_vision_node')
     node = GomokuVisionNode()
     try:
