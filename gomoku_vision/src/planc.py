@@ -104,15 +104,14 @@ class GomokuVisionNode:
         
     def _play_and_check(self, x, y):
         self.board.play(x, y)
-        # if self.board.check_win(x, y):
-        #     print('Game over!')
-        #     print('The winner is:', self.board.get_winner())
-        #     self.board.reset()
-        #     # publish 1 if someone wins
-        #     victory_msg = Int8()
-        #     victory_msg.data = 1
-
-        #     self.victory_pub.publish(victory_msg)
+        if self.board.is_game_over():
+            print('Game over!')
+            print('The winner is:', self.board.get_winner())
+            self.board.reset()
+            # publish 1 if someone wins
+            victory = Int8()
+            victory.data = 1
+            self.victory_pub.publish(victory)
             
 
 if __name__ == '__main__':

@@ -27,9 +27,9 @@ class GomokuBoard:
             return
         if self.board[x][y] == BoardState.EMPTY:
             self.board[x][y] = self.current_player
-            # if self.check_win(x, y):
-            #     self.winner = self.current_player
-            #     self.game_over = True
+            if self.check_win(x, y):
+                self.winner = self.current_player
+                self.game_over = True
             self.current_player = BoardState.BLACK if self.current_player == BoardState.WHITE else BoardState.WHITE
 
             self.round += 1 if self.current_player == BoardState.WHITE else 0
@@ -46,12 +46,12 @@ class GomokuBoard:
         return False
 
     def check_direction(self, x, y, dx, dy):
-        count = 0
+        count = -1
         while x >= 0 and x < self.N and y >= 0 and y < self.N and self.board[y][x] == self.current_player:
             count += 1
             x += dx
             y += dy
-        return count
+        return count if count > 0 else 0
     
     def get_length(self):
         return self.N
